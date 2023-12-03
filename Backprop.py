@@ -1,16 +1,14 @@
 from Neuron import *
 
-neuron_number = 0
 
-input = [1.5]
-target = [0.5,1]
-input_layer = [input_Neuron(neuron_number)]
-neuron_number += 1
-
+input = [1.5,1,2,5,0.2]
+target = [0.5,1,4,0.1]
+input_layer = [input_Neuron(0),input_Neuron(1),input_Neuron(2)]
+neuron_number = 3
 
 weights = []
 
-layer_layout = [[2],[1]]
+layer_layout = [[3],[4]]
 
 layers = []
 active_neurons = []
@@ -59,7 +57,6 @@ def backprop():
 
 
 
-#    new_weight = weight - (learning_rate * error_durch_w)
 
 
 backprop()

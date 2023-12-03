@@ -35,7 +35,6 @@ class Neuron():
             parent_connection = self.parent_connections[p]
             parent = parent_connection[0]
             new_weight_to_parent = parent_connection[2]
-            #new_weight = parent_connection[1] + sum(new_weight_to_parent)
             parent.children_connections[self.__hash__()] = [self, new_weight_to_parent[0], new_weight_to_parent]
             self.parent_connections[p] = [parent, new_weight_to_parent[0], new_weight_to_parent]
 
