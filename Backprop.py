@@ -1,14 +1,29 @@
 from Neuron import *
+import numpy as np
 
+from sklearn import datasets
+iris = datasets.load_iris()
+from sklearn.utils import shuffle
+
+X = np.array(iris.data)
+y = np.array(iris.target)
+X, y = shuffle(X, y)
+X_train = X[:100]
+X_test = X[100:]
+y_train = np.array([y[:100]])
+y_test = np.array([y[100:]])
+
+train_data = np.concatenate((X_train, y_train.T), axis=1)
+test_data = np.concatenate((X_test, y_test.T), axis=1)
 
 input = [1.5,1,2,5,0.2]
 target = [0.5,1,4,0.1]
-input_layer = [input_Neuron(0),input_Neuron(1),input_Neuron(2)]
-neuron_number = 3
+input_layer = [input_Neuron(0),input_Neuron(1),input_Neuron(2),input_Neuron(3)]
+neuron_number = 4
 
 weights = []
 
-layer_layout = [[3],[4]]
+layer_layout = [[1]]
 
 layers = []
 active_neurons = []
@@ -39,31 +54,47 @@ def error_function(pre,tar):
 def deriv_error_function(pre,tar):
     return 2*(pre - tar)
 
-def compute_error():
-    for idx, inp in enumerate(input_layer):
-        inp.set_input(input[idx])
-
+def compute_error(target):
     for idx, n in enumerate(layers[-1]):
         pred = n.activation()
         print("error: ", error_function(pred, target[idx]))
 
-def backprop():
-    compute_error()
-    learning_rate = 0.1
+def predict(slice_of_data):
+    for idx, inp in enumerate(input_layer):
+        inp.set_input(slice_of_data[idx])
+    prediction = []
+    for i in layers[-1]:
+        prediction.append(i.activation())
+    return prediction
+
+
+def backprop(target):
+    compute_error(target)
+    learning_rate = 0.01
     for idx, n in enumerate(layers[-1]):
         error_through_a_zero = deriv_error_function(n.activation(), target[idx])
         n.gradient_descent(error_through_a_zero, learning_rate)
 
 
+def train(data):
+    for ds in data:
+        predict(ds[:-1])
+        backprop([ds[-1]])
+
+
+train(train_data)
+
+def test(data):
+    pred = []
+    for ds in data:
+        pred.append(round(predict(ds[:-1])[0],0))
+        layers[0][0].reset_neuron()
+    target = data[:,-1]
+    print("done")
 
 
 
+test(test_data)
 
-backprop()
-backprop()
-backprop()
-backprop()
-backprop()
-backprop()
 
 print("end")

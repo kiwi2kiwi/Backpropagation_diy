@@ -21,9 +21,10 @@ class Neuron():
 
 
     def wire(self):
-        weight = round(random.uniform(0, 1), 2)
+
         #weight = 0.8
         for p in self.parent_connections.keys():
+            weight = round(random.uniform(0, 1), 2)
             parent_connection = self.parent_connections[p]
             parent = parent_connection[0]
             parent.children_connections[self.__hash__()] = [self, weight, []]
