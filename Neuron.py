@@ -1,6 +1,7 @@
 import numpy as np
 import random
 
+
 class Neuron():
     def __init__(self, name):
         super(Neuron, self).__init__()
@@ -30,14 +31,18 @@ class Neuron():
             parent.children_connections[self.__hash__()] = [self, weight, []]
             self.parent_connections[p] = [parent, weight, []]
 
+    def gradient_normalisation(self, gradient):
+        #return gradient
+        return max(min(0.5,gradient),-0.5)
+        #return ((1. / (1 + np.exp(-gradient)))-0.5) * 1
 
     def change_weight(self):
         for p in self.parent_connections.keys():
             parent_connection = self.parent_connections[p]
             parent = parent_connection[0]
-            new_weight_to_parent = parent_connection[2]
-            parent.children_connections[self.__hash__()] = [self, new_weight_to_parent[0], new_weight_to_parent]
-            self.parent_connections[p] = [parent, new_weight_to_parent[0], new_weight_to_parent]
+            new_weight_to_parent = parent_connection[1] - sum(parent_connection[2])
+            parent.children_connections[self.__hash__()] = [self, new_weight_to_parent, [new_weight_to_parent]]
+            self.parent_connections[p] = [parent, new_weight_to_parent, [new_weight_to_parent]]
 
 
     def get_weight(self, parent):
@@ -52,9 +57,9 @@ class Neuron():
 
             error_durch_w = self.a_null_w_parent(parent_connection[0]) * bis_hier
 
-            self.parent_connections[p][2].append(self.get_weight(p) - (learning_rate * error_durch_w))
+            self.parent_connections[p][2].append(self.gradient_normalisation((learning_rate * error_durch_w)))
 
-            print("weight: ", round(parent_connection[1],2), " adjust: ", round(parent_connection[2][0] - self.get_weight(p),2))
+            print("weight: ", round(parent_connection[1],2), " adjust: ", round(sum(parent_connection[2]),2))
         self.change_weight()
         self.reset_neuron()
 
